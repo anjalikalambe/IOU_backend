@@ -1,15 +1,16 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 const usersRouter = require('./routes/users');
 const favoursRouter = require('./routes/favours');
-const rewardsRouter = require('./routes/rewards');
 
 require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 5000;
 
+app.use(cors());
 app.use(express.json());
 
 const indexHandler = (req, res) => {
@@ -29,7 +30,6 @@ connection.once('open', () => {
 
 
 app.use('/users',usersRouter);
-app.use('/rewards',rewardsRouter);
 app.use('/favours',favoursRouter);
 
 app.listen(port, () => {

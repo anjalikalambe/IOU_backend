@@ -6,16 +6,24 @@ router
     .get(favoursController.findAll);
 
 router
-    .route('/:id')
-    .get(favoursController.findById);
-
-router
     .route('/open')
     .get(favoursController.findByStatusOpen);
 
 router
     .route('/closed')
     .get(favoursController.findByStatusClose);
+
+router
+    .route('/keywords')
+    .get(favoursController.findByKeywords);
+
+router
+    .route('/findReward')
+    .get(favoursController.findByReward);
+
+router
+    .route('/:id')
+    .get(favoursController.findId);
 
 router
     .route('/add')
@@ -26,12 +34,24 @@ router
     .post(favoursController.updateById);
 
 router
-    .route('/keywords')
-    .get(favoursController.findByKeywords);
-
-router
     .route('/delete/:id')
     .delete(favoursController.deleteById);
+
+router
+    .route('/rewards/:id')
+    .get(favoursController.getRewards);
+
+router
+    .route('/addReward/:id')
+    .post(favoursController.addReward);
+
+router
+    .route('/deleteReward/:id')
+    .delete(favoursController.deleteReward);
+
+router
+    .route('/totalRewards/:id')
+    .get(favoursController.numOfRewards);
 
 
 module.exports = router;
