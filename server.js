@@ -4,6 +4,7 @@ const cors = require('cors');
 
 const usersRouter = require('./routes/users');
 const favoursRouter = require('./routes/favours');
+const publicRequestsRouter = require('./routes/publicRequests');
 
 require('dotenv').config();
 
@@ -31,6 +32,7 @@ connection.once('open', () => {
 
 app.use('/users',usersRouter);
 app.use('/favours',favoursRouter);
+app.use('/public/requests', publicRequestsRouter);
 
 app.listen(port, () => {
     console.log(`The express server is running on port: ${port}`);

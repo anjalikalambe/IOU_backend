@@ -1,13 +1,12 @@
 const mongoose = require('mongoose');
-const rewardSchema = require('./reward.schema');
+const rewardSchema = require('./requestReward.schema');
 
 const Schema = mongoose.Schema;
 
 const favoursSchema = new Schema({
-    name: {type: String, required : true, trim: true, minlength: 3},
-    description: {type: String, required: true},
-    status_open: {type: Boolean, required: true},
-    rewards: [rewardSchema]
+    name: { type: String, required: true, trim: true, minlength: 3 },
+    owed_by: {type: String, required: true, trim: true},
+    owed_to: {type: String, required: true, trim: true}
 }, {
     timestamps: true
 });
