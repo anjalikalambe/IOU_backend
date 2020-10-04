@@ -41,14 +41,14 @@ module.exports = {
     findByReward: function (req, res) {
         const search = req.query.search;
 
-        PublicRequest.find({"rewards.name": new RegExp(search, 'i')})
+        PublicRequest.find({"rewards.item": new RegExp(search, 'i')})
             .then(requests=> {res.json(requests)})
             .catch(err=>{res.status(400).json(`Error: ${err}`)});
     },
     addReward: function (req, res) {
         const id = req.params.id;
         let newReward = {
-            name: req.body.name,
+            item: req.body.item,
             owed_by: req.body.owed_by
         }
         
@@ -59,8 +59,10 @@ module.exports = {
     },
     deleteReward: function (req, res) {
         const id = req.params.id;
+        const item = req.params.item;
+        const owed_by = req.params.owed_by;
 
-        PublicRequest.updateOne({ _id: id }, { $pop: {rewards: 1}})
+        PublicRequest.updateOne({ _id: id }, { $pull: { 'rewards' : {'item' : item , 'owed_by' : owed_by}}})
             .then(() => res.json(`Reward removed!`))
             .catch(err => res.status(400).json(`Error: ${err}`));
 
@@ -80,9 +82,8 @@ module.exports = {
         const description = req.body.description;
         const status_open = req.body.status_open;
         const rewards = [{
-            name: req.body.rewards.name,
-            owed_by : req.body.rewards.opened_by,
-            
+            item: req.body.rewards.item,
+            owed_by : req.body.opened_by
         }]
 
         const newRequest = new PublicRequest({
