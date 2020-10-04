@@ -20,4 +20,8 @@ router
     .route('/update/')
     .post(usersController.update);
 
+router
+    .route('/leaderboard/')
+    .get(usersController.sortUsers);
+
 module.exports = router;

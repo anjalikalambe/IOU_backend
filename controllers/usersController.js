@@ -1,53 +1,51 @@
 const User = require('../models/user.model');
 
 module.exports = {
+    //Finds all the users saved to the database
     findAll: function (req, res) {
         User.find()
             .then(users => {res.json(users)})
             .catch(err => { res.status(400).json(`Error: ${err}`)});
     },
+    //finds user by username which is unique for all users
     findByUsername: function (req, res) {
-        let usernamePassed = req.query.username;
+        const username = req.query.username;
 
-        User.findOne({ username: usernamePassed })
+        User.findOne({ username : username })
             .then(user=>{res.json(user)})
             .catch(err => {res.status(400).json(`Error: ${err}`)});
     },
+    //adds user to database
     add: function (req, res) {
         const username = req.body.username;
-        const name = {
-            first: req.body.name.first,
-            last: req.body.name.last,
-        }
-        const email = req.body.email;
         const password = req.body.password;
+        const numRewards = 0;
 
         const newUser = new User({
             username,
-            name,
-            email,
-            password
+            password,
+            numRewards
         });
 
         newUser.save()
             .then(()=>res.json(`User successfully created!`))
             .catch(err=>res.status(400).json(`Error: ${err}`));
     },
+    //deletes user from database
     delete: function (req, res) {
-        let usernamePassed = req.query.username;
+        const username = req.query.username;
 
-        User.deleteOne({username : usernamePassed})
+        User.findOneAndDelete({ username : username })
             .then(() => { res.json(`User deleted!`)})
             .catch(err=>{res.status(400).json(`Error: ${err}`)});
     },
+    //updates user details in database
     update: function (req,res) {
-        const usernamePassed = req.query.username;
+        const username = req.query.username;
 
-        User.findOne({ username: usernamePassed })
+        User.findOne({ username : username })
             .then(user => { 
                 user.username = req.body.username;
-                user.name = req.body.name;
-                user.email = req.body.email;
                 user.password = req.body.password;
 
                 user.save()
@@ -56,6 +54,21 @@ module.exports = {
             })
             .catch(err => { res.status(400).json(`Error: ${err}`) });
         
+    },
+    // sorts users in descending order according to number of rewards earned
+    sortUsers: function (req, res) {
+        User.find({ numRewards: { $gt: 0 } }).sort({numRewards: -1})
+        .then(users => {res.json(users)})
+        .catch(err => { res.status(400).json(`Error: ${err}`)});
+    },
+    //increments number of rewards earned by user.
+    increaseNumRewards: function (owed_to) {
+        User.findOne({ username : owed_to })
+            .then(user => {
+                user.numRewards = user.numRewards + 1;
+                user.save();
+            })
+            .catch(err => { `$Error in increasing reward on user being owed, this may affect leaderboard.` });
     }
 };
 

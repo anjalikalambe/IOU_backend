@@ -4,9 +4,11 @@ const rewardSchema = require('./requestReward.schema');
 const Schema = mongoose.Schema;
 
 const favoursSchema = new Schema({
-    name: { type: String, required: true, trim: true, minlength: 3 },
+    item: { type: String, required: true, trim: true, minlength: 3 },
+    created_by: {type: String, required: true, trim: true},
     owed_by: {type: String, required: true, trim: true},
-    owed_to: {type: String, required: true, trim: true}
+    owed_to: { type: String, required: true, trim: true },
+    picture: {}
 }, {
     timestamps: true
 });
