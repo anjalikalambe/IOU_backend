@@ -9,10 +9,6 @@ router
     .get(usersController.findByUsername);
 
 router
-    .route('/add')
-    .post(usersController.add);
-
-router
     .route('/delete/')
     .delete(usersController.delete);
 

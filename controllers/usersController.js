@@ -15,22 +15,6 @@ module.exports = {
             .then(user=>{res.json(user)})
             .catch(err => {res.status(400).json(`Error: ${err}`)});
     },
-    //adds user to database
-    add: function (req, res) {
-        const username = req.body.username;
-        const password = req.body.password;
-        const numRewards = 0;
-
-        const newUser = new User({
-            username,
-            password,
-            numRewards
-        });
-
-        newUser.save()
-            .then(()=>res.json(`User successfully created!`))
-            .catch(err=>res.status(400).json(`Error: ${err}`));
-    },
     //deletes user from database
     delete: function (req, res) {
         const username = req.query.username;
