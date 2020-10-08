@@ -17,7 +17,7 @@ module.exports = {
                 success: false,
                 message: "All fields are required"
             });
-        } else if (password.length != 6) {
+        } else if (password.length < 6) {
             return res.status(400).json({
                 success: false,
                 message: "Password must be atleast 6 characters"
@@ -84,7 +84,7 @@ module.exports = {
                     if (!user) {
                         return res.status(404).json({
                             success: false,
-                            message: "User with that username not found"
+                            message: "Your username and/or password do not match"
                         });
                     } else {
                         bcrypt.compare(password, user.password)
@@ -108,7 +108,7 @@ module.exports = {
                                 } else {
                                     return res.status(404).json({
                                         success: false,
-                                        message: "Password incorrect.",
+                                        message: "Your username and/or password do not match",
                                         err: err
                                     });
                                 }
