@@ -1,7 +1,4 @@
 const User = require('../models/user.model');
-const validateRegisterInput = require('../validation/register');
-const validateLoginInput = require('../validation/login');
-
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -10,21 +7,28 @@ module.exports = {
     //adds user to database
     register: function (req, res) {
 
-        const { errors, isValid } = validateRegisterInput(req.body);
+        const username = req.body.username;
+        const password = req.body.password;
+        const confirmPassword = req.body.confirmPassword;
+        const numRewards = 0;
 
-        if (!req.body.username || !req.body.password ||
-            !isValid) {
-            res.json({
+        if (!username || !password || !req.body.confirmPassword) {
+            return res.status(400).json({
                 success: false,
-                message: "Please enter username and password"
+                message: "All fields are required"
             });
-            return res.status(400).json(errors);
-            
-        } else {
+        } else if (password.length != 6) {
+            return res.status(400).json({
+                success: false,
+                message: "Password must be atleast 6 characters"
+            });
+        } else if (password !== confirmPassword) {
+            return res.status(400).json({
+                success: false,
+                message: "Password and confirm password must match"
+            });
 
-            const username = req.body.username;
-            const password = req.body.password;
-            const numRewards = 0;
+        } else {
 
             User.findOne({ username: username })
                 .then(user => {
@@ -63,19 +67,17 @@ module.exports = {
     },
     //checks if user exists and authorises access to other protected routes using JWT
     login: function (req, res) {
-        const { errors, isValid } = validateLoginInput(req.body);
+
+        const username = req.body.username;
+        const password = req.body.password;
         
-        if (!req.body.username || !req.body.password || !isValid) {
-            res.json({
+        if (!username || !password) {
+            return res.status(400).json({
                 success: false,
-                message: "Please enter username and password"
+                message: "All fields are required"
             });
-            return res.status(400).json(errors);
             
         } else { 
-
-            const username = req.body.username;
-            const password = req.body.password;
 
             User.findOne({ username })
                 .then(user => {
