@@ -1,24 +1,25 @@
 const router = require('express').Router();
 const favoursController = require('../controllers/favoursController');
+const passport = require('passport');
 
 router
     .route('/owed/')
-    .get(favoursController.findFavoursOwed);
+    .get(passport.authenticate('jwt', {session: false}), favoursController.findFavoursOwed);
 
 router
     .route('/earned/')
-    .get(favoursController.findRewardsEarned);
+    .get(passport.authenticate('jwt', {session: false}), favoursController.findRewardsEarned);
 
 router
     .route('/keywords')
-    .get(favoursController.findByKeywords);
+    .get(passport.authenticate('jwt', {session: false}), favoursController.findByKeywords);
 
 router
     .route('/add')
-    .post(favoursController.add);
+    .post(passport.authenticate('jwt', {session: false}), favoursController.add);
 
 router
     .route('/delete/:id')
-    .delete(favoursController.delete);
+    .delete(passport.authenticate('jwt', {session: false}), favoursController.delete);
 
 module.exports = router;

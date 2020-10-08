@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const publicRequestsController = require('../controllers/publicRequestsController');
+const passport = require('passport');
 
 router
     .route('/')
@@ -27,7 +28,7 @@ router
 
 router
     .route('/add')
-    .post(publicRequestsController.add);
+    .post(passport.authenticate('jwt', {session: false}), publicRequestsController.add);
 
 router
     .route('/closeRequest/:id')
@@ -35,7 +36,7 @@ router
 
 router
     .route('/delete/:id')
-    .delete(publicRequestsController.deleteById);
+    .delete(passport.authenticate('jwt', {session: false}), publicRequestsController.deleteById);
 
 router
     .route('/rewards/:id')
@@ -43,11 +44,11 @@ router
 
 router
     .route('/addReward/:id')
-    .post(publicRequestsController.addReward);
+    .post(passport.authenticate('jwt', {session: false}), publicRequestsController.addReward);
 
 router
     .route('/deleteReward/:id')
-    .delete(publicRequestsController.deleteReward);
+    .delete(passport.authenticate('jwt', {session: false}), publicRequestsController.deleteReward);
 
 router
     .route('/totalRewards/:id')
