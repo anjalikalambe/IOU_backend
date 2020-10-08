@@ -1,20 +1,22 @@
 const router = require('express').Router();
 const usersController = require('../controllers/usersController');
+const passport = require('passport');
+
 router
     .route('/')
-    .get(usersController.findAll);
+    .get(passport.authenticate('jwt', {session: false}), usersController.findAll);
 
 router
     .route('/user/')
-    .get(usersController.findByUsername);
+    .get(passport.authenticate('jwt', {session: false}), usersController.findByUsername);
 
 router
     .route('/delete/')
-    .delete(usersController.delete);
+    .delete(passport.authenticate('jwt', {session: false}), usersController.delete);
 
 router
     .route('/update/')
-    .post(usersController.update);
+    .post(passport.authenticate('jwt', {session: false}), usersController.update);
 
 router
     .route('/leaderboard/')
