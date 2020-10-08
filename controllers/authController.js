@@ -109,7 +109,7 @@ module.exports = {
                                     return res.status(404).json({
                                         success: false,
                                         message: "Your username and/or password do not match",
-                                        err: err
+                                        err: 'error'
                                     });
                                 }
                             });
