@@ -2,8 +2,26 @@ const User = require('../models/user.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-
 module.exports = {
+    //function to verify token from client to then protect frontend routes. 
+    verifyToken: function(req, res) {
+        const authorization = req.headers.authorization;
+        if (authorization && authorization.split(' ')[0] === 'Bearer'){
+            jwt.verify(req.headers.authorization.split(' ')[1], process.env.SECRET, (err,decoded)=> {
+                if(err){
+                    res.json(false);
+                } else {
+                    res.json(true);
+                }
+            })
+        } else { 
+            res.json({
+                success: false,
+                message: "No token provided"
+                }
+            );
+        }
+    },
     //adds user to database
     register: function (req, res) {
 
