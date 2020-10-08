@@ -77,7 +77,7 @@ module.exports = {
                 message: "All fields are required"
             });
             
-        } else { 
+        } else {
 
             User.findOne({ username })
                 .then(user => {
@@ -114,7 +114,14 @@ module.exports = {
                                 }
                             });
                     }
-                });  
+                })
+                .catch(e => {
+                    return res.status(404).json({
+                        success: false,
+                        message: "Your username and/or password do not match",
+                        err: 'error'
+                    });
+                })
         }
-    },
+    }
 }
