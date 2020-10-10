@@ -5,21 +5,27 @@ const jwt = require('jsonwebtoken');
 module.exports = {
     //function to verify token from client to then protect frontend routes. 
     verifyToken: function(req, res) {
+        console.log('req.headers', req.headers);
         const authorization = req.headers.authorization;
         if (authorization && authorization.split(' ')[0] === 'Bearer'){
             jwt.verify(req.headers.authorization.split(' ')[1], process.env.SECRET, (err,decoded)=> {
                 if(err){
-                    res.json(false);
+                    res.json({
+                        success: false,
+                        message: "No token provided"
+                    });
                 } else {
-                    res.json(true);
+                    res.json({
+                        success: true,
+                        message: "Authorized"
+                    });
                 }
             })
         } else { 
             res.json({
                 success: false,
                 message: "No token provided"
-                }
-            );
+            });
         }
     },
     //adds user to database
