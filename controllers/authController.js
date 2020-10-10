@@ -12,7 +12,7 @@ module.exports = {
                 if(err){
                     res.json({
                         success: false,
-                        message: "No token provided"
+                        message: "Unauthorized"
                     });
                 } else {
                     res.json({
