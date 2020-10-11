@@ -108,7 +108,8 @@ module.exports = {
                                 } else {
                                     return res.status(404).json({
                                         success: false,
-                                        message: "Password incorrect."
+                                        message: "Your username and/or password do not match",
+                                        err: 'error'
                                     });
                                 }
                             });
