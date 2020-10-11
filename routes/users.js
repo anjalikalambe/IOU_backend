@@ -7,10 +7,6 @@ router
     .get(passport.authenticate('jwt', {session: false}), usersController.findAll);
 
 router
-    .route('/user/')
-    .get(passport.authenticate('jwt', {session: false}), usersController.findByUsername);
-
-router
     .route('/delete/')
     .delete(passport.authenticate('jwt', {session: false}), usersController.delete);
 

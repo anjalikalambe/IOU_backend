@@ -15,16 +15,23 @@ module.exports = {
             });
     },
     //finds user by username which is unique for all users
-    findByUsername: function (req, res) {
-        const username = req.query.username;
-
-        User.findOne({ username : username })
-            .then(user=>{res.json(user)})
-            .catch(err => {res.status(400).json({
-                success: false,
-                message: "User not found",
-                err: err
-            })});
+    findByUsername: async function (username) {
+        
+        let obj = null;
+        await User.findOne({ username : username })
+            .then(user => {
+                obj = user;
+                return obj;
+            })
+            .catch(err => {
+                obj = {
+                    success: false,
+                    message: "User not found",
+                    err: err
+                }
+                return obj;
+            });
+        return obj;
     },
     //deletes user from database
     delete: function (req, res) {
