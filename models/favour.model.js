@@ -8,7 +8,9 @@ const favoursSchema = new Schema({
     created_by: {type: String, required: true, trim: true},
     owed_by: {type: String, required: true, trim: true},
     owed_to: { type: String, required: true, trim: true },
-    picture: {}
+    openImgURL: { type: String },
+    closeImgURL: { type: String },
+    completed: { type: Boolean, required: true }
 }, {
     timestamps: true
 });

@@ -1,3 +1,6 @@
+# Images that will be saved on server 
+uploads/*
+!uploads/.gitkeep
 # Logs
 logs
 *.log

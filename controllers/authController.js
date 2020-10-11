@@ -108,8 +108,7 @@ module.exports = {
                                 } else {
                                     return res.status(404).json({
                                         success: false,
-                                        message: "Password incorrect.",
-                                        err: err
+                                        message: "Password incorrect."
                                     });
                                 }
                             });
