@@ -43,7 +43,7 @@ router
     .get(publicRequestsController.getRewards);
 
 router
-    .route('/addReward/:id')
+    .route('/addReward/')
     .post(passport.authenticate('jwt', {session: false}), publicRequestsController.addReward);
 
 router
