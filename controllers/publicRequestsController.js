@@ -1,4 +1,15 @@
 const PublicRequest = require('../models/publicRequest.model');
+const jwt = require('jsonwebtoken');
+
+//use token payload to get logged in user.
+const getLoggedInUser = (req, res) => {
+    let token = req.headers.authorization;
+    token = token.split(' ')[1];
+    let decodedToken = jwt.verify(token, process.env.SECRET);
+    let username = decodedToken["username"];
+
+    return username;
+}
 
 module.exports = {
     findAll: function (req, res) {
@@ -74,17 +85,20 @@ module.exports = {
             })});
     },
     addReward: function (req, res) {
-        const id = req.params.id;
+        const id = req.query.id;
+        let username = getLoggedInUser(req, res)
         let newReward = {
             item: req.body.item,
-            owed_by: req.body.owed_by
+            owed_by: username
         }
         
-        PublicRequest.updateOne({ _id: id }, {$push: { rewards: newReward }})
-            .then(() => res.json({
+        PublicRequest.findByIdAndUpdate({ _id: id }, { $push: { rewards: newReward } })
+            .then((request) => {
+                request.save();
+                res.json({
                 success: true,
                 message: `Successfully added new reward to public request!`
-            }))
+            })})
             .catch(err => res.status(400).json({
                 success: false,
                 message: `Could not add new reward to the public request`,
@@ -124,12 +138,14 @@ module.exports = {
             }));
     },
     add: function (req, res) {
-        const opened_by = req.body.opened_by;
+        let username = getLoggedInUser(req, res);
+        
+        const opened_by = username;
         const description = req.body.description;
-        const status_open = req.body.status_open;
+        const status_open = true;
         const rewards = [{
             item: req.body.rewards.item,
-            owed_by : req.body.opened_by
+            owed_by : username
         }]
 
         const newRequest = new PublicRequest({
