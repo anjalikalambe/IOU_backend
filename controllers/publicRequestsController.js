@@ -1,4 +1,5 @@
 const PublicRequest = require('../models/publicRequest.model');
+const favoursController = require('../controllers/favoursController');
 const jwt = require('jsonwebtoken');
 
 //use token payload to get logged in user.
@@ -182,9 +183,26 @@ module.exports = {
         
         
     },
-    deleteById: function (req, res) {
-        let id = req.params.id;
+    delete: async function (req, res) {
+        let favour = req.query.favour;
+        favour = JSON.parse(favour);
+        const id = favour._id;
+        const username = getLoggedInUser(req, res);
 
+        const created_by = favour.opened_by;
+        const owed_by = favour.opened_by;
+        const owed_to = username;
+        const rewards = favour.rewards;
+
+        let data = {
+            created_by,
+            owed_by,
+            owed_to,
+            rewards
+        }
+
+        await favoursController.addResolvedRequestFavour(data);
+        
         PublicRequest.findByIdAndDelete(id)
             .then(() => { res.json({
                 success: true,

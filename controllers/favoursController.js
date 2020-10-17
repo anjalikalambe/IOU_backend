@@ -223,6 +223,29 @@ module.exports = {
                     err: err
                 })
             });
+    },
+    addResolvedRequestFavour: function (data) {
+        let rewards = data.rewards;
+
+        for (let i = 0; i < rewards.length; i++){
+            let item = rewards[i].item;
+            let created_by = rewards[i].owed_by;
+            let owed_by = rewards[i].owed_by;
+            let owed_to = data.owed_to;
+            let completed = false;
+
+            const newFavour = new Favour({
+                item,
+                created_by,
+                owed_by,
+                owed_to,
+                completed
+            });
+
+            newFavour.save()
+                .then(() => console.log( `Created a favour for reward: ${item}`))
+                .catch(err => console.log(err));
+        }
     }
 };
 
