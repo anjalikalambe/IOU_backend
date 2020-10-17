@@ -76,15 +76,16 @@ module.exports = {
     //adds new rewards/favours to the database. (max 5 - do something!!)
     add: async function (req, res) {
 
+        let username = getLoggedInUser(req, res);
         const item = req.body.item;
-        const created_by = req.body.created_by;
+        const created_by = username;
         const owed_by = req.body.owed_by;
         const owed_to = req.body.owed_to;
         const completed = false;
 
         //Check that favour is created with valid usernames
         if (await findByUsername(created_by) === null || await findByUsername(owed_by) === null || await findByUsername(owed_to) === null) {
-            return res.json({
+            return res.status(400).json({
                 success: false,
                 message: "Please make sure all users are existing users."
             });
@@ -92,9 +93,9 @@ module.exports = {
 
         // Proof is mandatory to create a favour that is owed by another user, otherwise optional.
         if (created_by === owed_to && !req.file) {
-            return res.json({
+            return res.status(400).json({
                 success: false,
-                message: "Image is required if you want to add a favour that is owed by another user. Please upload image."
+                message: "Image is required to create favour owed by another user. Please upload image."
             });
         }
 
@@ -114,7 +115,7 @@ module.exports = {
         newFavour.save()
             .then(() => res.json({
                 success: true,
-                message: `Successfully added a new favour! ${newFavour.id}`
+                message: `Successfully added a new favour!`
             }))
             .catch(err => res.status(400).json({
                 success: false,
