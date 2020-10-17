@@ -75,7 +75,6 @@ module.exports = {
     },
     //adds new rewards/favours to the database. (max 5 - do something!!)
     add: async function (req, res) {
-
         let username = getLoggedInUser(req, res);
         const item = req.body.item;
         const created_by = username;
@@ -101,7 +100,7 @@ module.exports = {
 
         // file path created if file sent by user
         let openImgURL = "";
-        req.file ? openImgURL = req.protocol + "://" + req.hostname + "/" + req.file.path.replace("\\", "/") : " ";
+        req.file ? openImgURL = req.protocol + "://" + req.hostname + ":5000/" + req.file.path.replace("\\", "/") : " ";
 
         const newFavour = new Favour({
             item,
@@ -115,7 +114,8 @@ module.exports = {
         newFavour.save()
             .then(() => res.json({
                 success: true,
-                message: `Successfully added a new favour!`
+                message: `Successfully added a new favour!`,
+                id: newFavour._id
             }))
             .catch(err => res.status(400).json({
                 success: false,
