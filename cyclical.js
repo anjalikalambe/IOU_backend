@@ -17,11 +17,7 @@ const newFavour = {
 };
 data.push(newFavour);
 
-if (isCyclical(data)) {
-  console.log("cycle exists");
-} else {
-  console.log("no cycle exists");
-}
+isCyclical(data) ? console.log("cycle exists") : console.log("no cycle exists");
 
 function isCyclical(data) {
   let currentNode = data.find(
