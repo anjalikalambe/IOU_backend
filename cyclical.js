@@ -1,34 +1,19 @@
 const data = [
   {
-    id: 1,
     item: "cookie",
-    owed_by: "Bragg",
+    owed_by: "David",
     owed_to: "Anjali",
   },
   {
-    id: 2,
     item: "cookie",
     owed_by: "Anjali",
     owed_to: "Zac",
   },
-  {
-    id: 3,
-    item: "cookie",
-    owed_by: "Zac",
-    owed_to: "Test",
-  },
-  {
-    id: 4,
-    item: "cookie",
-    owed_by: "Test",
-    owed_to: "David",
-  },
 ];
 const newFavour = {
-  id: 5,
   item: "cookie",
-  owed_by: "David",
-  owed_to: "Bragg",
+  owed_by: "Zac",
+  owed_to: "David",
 };
 data.push(newFavour);
 
