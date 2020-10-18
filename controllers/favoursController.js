@@ -18,7 +18,7 @@ module.exports = {
     findFavoursOwed: function (req, res) {
         let username = getLoggedInUser(req, res);
 
-        Favour.find({ owed_by: username, completed: false })
+        Favour.find({ owed_by: username })
             .then(favours => { res.json(favours) })
             .catch(err => {
                 res.status(400).json({
@@ -33,7 +33,7 @@ module.exports = {
 
         let username = getLoggedInUser(req, res);
 
-        Favour.find({ owed_to: username, completed: false })
+        Favour.find({ owed_to: username })
             .then(favours => { res.json(favours) })
             .catch(err => {
                 res.status(400).json({
@@ -132,7 +132,7 @@ module.exports = {
         let loggedInUser = getLoggedInUser(req, res);
 
         let closeImgURL = "";
-        req.file ? closeImgURL = req.protocol + "://" + req.hostname + "/" + req.file.path.replace("\\", "/") : " ";
+        req.file ? closeImgURL = req.protocol + "://" + req.hostname + ":5000/" + req.file.path.replace("\\", "/") : " ";
 
         Favour.findById(favourId)
             .then(favour => {
@@ -140,7 +140,7 @@ module.exports = {
 
                 // To close a favour that is owed by the user himself, proof is required.
                 if (loggedInUser === owed_by && !req.file) {
-                    return res.json({
+                    return res.status(404).json({
                         success: false,
                         message: "Image is required if you want to close a favour that is owed by you. Please upload image."
                     });

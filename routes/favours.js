@@ -46,7 +46,7 @@ router
     .post(passport.authenticate('jwt', { session: false }), upload.single('favourImage'), favoursController.add);
 
 router
-    .route('/repaid')
+    .route('/resolve')
     .post(passport.authenticate('jwt', {session: false}), upload.single('favourImage'), favoursController.done);
 
 router
