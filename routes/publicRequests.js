@@ -35,8 +35,8 @@ router
     .post(publicRequestsController.closeRequest);
 
 router
-    .route('/delete/:id')
-    .delete(passport.authenticate('jwt', {session: false}), publicRequestsController.deleteById);
+    .route('/delete/')
+    .post(passport.authenticate('jwt', {session: false}), publicRequestsController.delete);
 
 router
     .route('/rewards/:id')

@@ -18,7 +18,7 @@ module.exports = {
     findFavoursOwed: function (req, res) {
         let username = getLoggedInUser(req, res);
 
-        Favour.find({ owed_by: username, completed: false })
+        Favour.find({ owed_by: username })
             .then(favours => { res.json(favours) })
             .catch(err => {
                 res.status(400).json({
@@ -33,7 +33,7 @@ module.exports = {
 
         let username = getLoggedInUser(req, res);
 
-        Favour.find({ owed_to: username, completed: false })
+        Favour.find({ owed_to: username })
             .then(favours => { res.json(favours) })
             .catch(err => {
                 res.status(400).json({
@@ -75,16 +75,16 @@ module.exports = {
     },
     //adds new rewards/favours to the database. (max 5 - do something!!)
     add: async function (req, res) {
-
+        let username = getLoggedInUser(req, res);
         const item = req.body.item;
-        const created_by = req.body.created_by;
+        const created_by = username;
         const owed_by = req.body.owed_by;
         const owed_to = req.body.owed_to;
         const completed = false;
 
         //Check that favour is created with valid usernames
         if (await findByUsername(created_by) === null || await findByUsername(owed_by) === null || await findByUsername(owed_to) === null) {
-            return res.json({
+            return res.status(400).json({
                 success: false,
                 message: "Please make sure all users are existing users."
             });
@@ -92,15 +92,15 @@ module.exports = {
 
         // Proof is mandatory to create a favour that is owed by another user, otherwise optional.
         if (created_by === owed_to && !req.file) {
-            return res.json({
+            return res.status(400).json({
                 success: false,
-                message: "Image is required if you want to add a favour that is owed by another user. Please upload image."
+                message: "Image is required to create favour owed by another user. Please upload image."
             });
         }
 
         // file path created if file sent by user
         let openImgURL = "";
-        req.file ? openImgURL = req.protocol + "://" + req.hostname + "/" + req.file.path.replace("\\", "/") : " ";
+        req.file ? openImgURL = req.protocol + "://" + req.hostname + ":5000/" + req.file.path.replace("\\", "/") : " ";
 
         const newFavour = new Favour({
             item,
@@ -114,7 +114,8 @@ module.exports = {
         newFavour.save()
             .then(() => res.json({
                 success: true,
-                message: `Successfully added a new favour! ${newFavour.id}`
+                message: `Successfully added a new favour!`,
+                id: newFavour._id
             }))
             .catch(err => res.status(400).json({
                 success: false,
@@ -131,7 +132,7 @@ module.exports = {
         let loggedInUser = getLoggedInUser(req, res);
 
         let closeImgURL = "";
-        req.file ? closeImgURL = req.protocol + "://" + req.hostname + "/" + req.file.path.replace("\\", "/") : " ";
+        req.file ? closeImgURL = req.protocol + "://" + req.hostname + ":5000/" + req.file.path.replace("\\", "/") : " ";
 
         Favour.findById(favourId)
             .then(favour => {
@@ -139,7 +140,7 @@ module.exports = {
 
                 // To close a favour that is owed by the user himself, proof is required.
                 if (loggedInUser === owed_by && !req.file) {
-                    return res.json({
+                    return res.status(404).json({
                         success: false,
                         message: "Image is required if you want to close a favour that is owed by you. Please upload image."
                     });
@@ -223,6 +224,29 @@ module.exports = {
                     err: err
                 })
             });
+    },
+    addResolvedRequestFavour: function (data) {
+        let rewards = data.rewards;
+
+        for (let i = 0; i < rewards.length; i++){
+            let item = rewards[i].item;
+            let created_by = rewards[i].owed_by;
+            let owed_by = rewards[i].owed_by;
+            let owed_to = data.owed_to;
+            let completed = false;
+
+            const newFavour = new Favour({
+                item,
+                created_by,
+                owed_by,
+                owed_to,
+                completed
+            });
+
+            newFavour.save()
+                .then(() => console.log( `Created a favour for reward: ${item}`))
+                .catch(err => console.log(err));
+        }
     }
 };
 
