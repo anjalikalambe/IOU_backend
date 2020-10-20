@@ -73,7 +73,7 @@ module.exports = {
                 })
             });
     },
-    //adds new rewards/favours to the database. (max 5 - do something!!)
+    //adds new rewards/favours to the database. 
     add: async function (req, res) {
         let username = getLoggedInUser(req, res);
         const item = req.body.item;
@@ -146,7 +146,7 @@ module.exports = {
                     });
                 }
 
-                loggedInUser === owed_by ? favour.closeImgURL = closeImgURL : "";
+                closeImgURL ? favour.closeImgURL = closeImgURL : "";
                 favour.completed = true;
 
                 favour.save()
@@ -225,22 +225,36 @@ module.exports = {
                 })
             });
     },
-    addResolvedRequestFavour: function (data) {
-        let rewards = data.rewards;
+    addResolvedRequestFavour: function (req, res) {
+
+        let loggedInUser = getLoggedInUser(req, res);
+        const rewards = JSON.parse(req.body.rewards);
+        const id = req.body.id;
 
         for (let i = 0; i < rewards.length; i++){
             let item = rewards[i].item;
             let created_by = rewards[i].owed_by;
             let owed_by = rewards[i].owed_by;
-            let owed_to = data.owed_to;
+            let owed_to = loggedInUser
             let completed = false;
+
+            if (req.body.favourImage==="") {
+                return res.status(400).json({
+                    success: false,
+                    message: "Image is required to close a public request."
+                });
+            }
+
+            let openImgURL = "";
+            req.file ? openImgURL = "http://localhost:5000/" + req.file.path.replace("\\", "/") : " ";
 
             const newFavour = new Favour({
                 item,
                 created_by,
                 owed_by,
                 owed_to,
-                completed
+                completed,
+                openImgURL
             });
 
             newFavour.save()

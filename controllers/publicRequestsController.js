@@ -183,30 +183,11 @@ module.exports = {
         
         
     },
-    delete: async function (req, res) {
-        let favour = req.query.favour;
-        favour = JSON.parse(favour);
-        const id = favour._id;
-        const username = getLoggedInUser(req, res);
-
-        const created_by = favour.opened_by;
-        const owed_by = favour.opened_by;
-        const owed_to = username;
-        const rewards = favour.rewards;
-
-        let data = {
-            created_by,
-            owed_by,
-            owed_to,
-            rewards
-        }
-
-        await favoursController.addResolvedRequestFavour(data);
-        
-        PublicRequest.findByIdAndDelete(id)
+    delete: async function (req, res) {        
+        PublicRequest.findByIdAndDelete(req.body.id)
             .then(() => { res.json({
                 success: true,
-                message: `Successfully deleted public request!`
+                message: `Successfully deleted public request and resolved rewards!`
             })})
             .catch(err=>{res.status(400).json({
                 success: false,

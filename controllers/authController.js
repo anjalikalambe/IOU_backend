@@ -103,7 +103,7 @@ module.exports = {
             
         } else {
 
-            User.findOne({ username })
+            User.findOne({ username : username })
                 .then(user => {
                     if (!user) {
                         return res.status(404).json({

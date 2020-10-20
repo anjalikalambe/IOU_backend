@@ -61,4 +61,8 @@ router
     .route('/getClosedImgName/')
     .get(passport.authenticate('jwt', { session: false }), favoursController.getClosedImgName);
 
+router 
+    .route('/createRequestRewards')
+    .post(passport.authenticate('jwt', { session: false }), upload.single('favourImage'), favoursController.addResolvedRequestFavour)
+
 module.exports = router;
