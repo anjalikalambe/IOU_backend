@@ -276,7 +276,7 @@ module.exports = {
                     if (favour.owed_to === currentFavour.owed_by) {
                         return res.json({
                             success: true,
-                            message: `A party just formed! Meetup with: `,
+                            message: `A party just formed! Party includes: `,
                             people: people
                         });
                     }

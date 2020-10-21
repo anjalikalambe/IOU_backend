@@ -28,9 +28,13 @@ userSchema.pre(
     'save',
     async function (next) {
         const user = this;
-        const hash = await bcrypt.hash(this.password, 10);
-        user.password = hash;
-        next();
+        if (this.isModified("password") || this.isNew) {
+            const hash = await bcrypt.hash(this.password, 10);
+            user.password = hash;
+            next();
+        } else {
+            next();
+        }
     }
 );
 const User = mongoose.model('User', userSchema);
