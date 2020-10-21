@@ -1,0 +1,89 @@
+.navbar {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  padding: 0 50px;
+  font-size: 18px;
+  font-weight: 600;
+  z-index: 100;
+  .active {
+    color: #6030b1 !important;
+  }
+  a {
+    color: #0a1f44 !important;
+    text-decoration: none;
+  }
+  .links {
+    display: flex;
+    width: 100%;
+    max-width: 550px;
+  }
+  .link {
+    position: relative;
+    &:after {
+      background-color: #0a1f44;
+      transition: all 0.25s cubic-bezier(0.694, 0.048, 0.335, 1);
+      content: "";
+      position: absolute;
+      bottom: -3px;
+      right: 0;
+      left: auto;
+      width: 0;
+      height: 3px;
+      z-index: 2;
+    }
+    &:hover:after {
+      width: 100%;
+      left: 0;
+    }
+  }
+  .active:after {
+    background-color: #6030b1 !important;
+  }
+  .logo {
+    height: 40px;
+    width: 150px;
+  }
+}
+//
+a.btn-contact {
+  display: flex;
+  cursor: pointer;
+  max-height: 48px;
+  min-height: 48px;
+  padding: 12px 40px;
+  align-items: center;
+  border: 2px #5d3eff;
+  border-radius: 50px;
+  background-color: #6030b1;
+  color: #fff !important;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  transition: all 350ms ease;
+  &:hover {
+    background-color: #5d3eff;
+    color: #fff !important;
+  }
+}
+.btn-contact.active {
+  color: white !important;
+}
+#phone-nav {
+  display: none;
+}
+
+@media screen and (max-width: 750px) {
+  .links {
+    display: none !important;
+  }
+  #phone-nav {
+    display: block;
+  }
+}
+@media screen and (max-width: 500px) {
+  .navbar {
+    padding: 0 20px;
+    height: 85px;
+  }
+}

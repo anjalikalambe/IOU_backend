@@ -6,7 +6,7 @@ const usersRouter = require('./routes/users');
 const favoursRouter = require('./routes/favours');
 const publicRequestsRouter = require('./routes/publicRequests');
 const authRouter = require('./routes/auth');
-
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -14,12 +14,7 @@ const port = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
-
-const indexHandler = (req, res) => {
-    res.send(`<!DOCTYPE html><title>Hello, World!</title><h1>Favours</h1><p>Hello, World!</p>`);
-}
-app.get('/', indexHandler);
-
+app.use(express.static('client/build'));
 
 //connect to mongo cluster 
 const uri = process.env.ATLAS_URI;
@@ -35,10 +30,14 @@ app.use(passport.initialize());
 //Passport config
 require("./config/passport")(passport);
 //API Routes
-app.use('/users',usersRouter);
-app.use('/favours',favoursRouter);
-app.use('/public/requests', publicRequestsRouter);
-app.use('/auth',authRouter);
+app.use('/api/users',usersRouter);
+app.use('/api/favours',favoursRouter);
+app.use('/api/public/requests', publicRequestsRouter);
+app.use('/api/auth',authRouter);
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/client/build/index.html'));
+});
 
 app.listen(port, () => {
     console.log(`The express server is running on port: ${port}`);
