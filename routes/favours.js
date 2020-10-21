@@ -65,4 +65,8 @@ router
     .route('/createRequestRewards')
     .post(passport.authenticate('jwt', { session: false }), upload.single('favourImage'), favoursController.addResolvedRequestFavour)
 
+router 
+    .route('/detectParty')
+    .get(favoursController.detectParty)
+
 module.exports = router;

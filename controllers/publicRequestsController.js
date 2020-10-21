@@ -107,12 +107,14 @@ module.exports = {
             }));
         
     },
-    deleteReward: function (req, res) {
-        const id = req.params.id;
-        const item = req.params.item;
-        const owed_by = req.params.owed_by;
+    deleteReward: async function (req, res) {
+        const id = req.query.id;
+        const item = req.body.item;
+        const owed_by = getLoggedInUser(req, res);
+        let numRewards;
 
-        PublicRequest.updateOne({ _id: id }, { $pull: { 'rewards' : {'item' : item , 'owed_by' : owed_by}}})
+
+        await PublicRequest.findOneAndUpdate({ _id: id }, { $pull: { 'rewards' : {'item' : item , 'owed_by' : owed_by}}})
             .then(() => res.json({
                 success: true,
                 message: `Successfully deleted reward from public request!`
@@ -122,6 +124,16 @@ module.exports = {
                 message: `Could not delete reward from the public request`,
                 err: err
             }));
+        
+        await PublicRequest.findById(id)
+            .then(request => {
+                numRewards = request.rewards.length;
+            })
+        
+        if (numRewards === 0) {
+            PublicRequest.findByIdAndDelete(id)
+                .then(console.log("deleted"))
+        }
 
     },
     numOfRewards: function (req, res) {

@@ -1,5 +1,4 @@
 const Favour = require('../models/favour.model');
-const User = require('../models/user.model');
 const { findByUsername, increaseNumRewards } = require('./usersController');
 const jwt = require('jsonwebtoken');
 
@@ -91,7 +90,7 @@ module.exports = {
         }
 
         // Proof is mandatory to create a favour that is owed by another user, otherwise optional.
-        if (created_by === owed_to && !req.file) {
+        if (created_by === owed_to && owed_by!==owed_to && !req.file) {
             return res.status(400).json({
                 success: false,
                 message: "Image is required to create favour owed by another user. Please upload image."
@@ -139,7 +138,7 @@ module.exports = {
                 const owed_by = favour.owed_by;
 
                 // To close a favour that is owed by the user himself, proof is required.
-                if (loggedInUser === owed_by && !req.file) {
+                if (loggedInUser === owed_by && owed_by!==favour.owed_to && !req.file) {
                     return res.status(404).json({
                         success: false,
                         message: "Image is required if you want to close a favour that is owed by you. Please upload image."
@@ -261,6 +260,33 @@ module.exports = {
                 .then(() => console.log( `Created a favour for reward: ${item}`))
                 .catch(err => console.log(err));
         }
+    },
+    detectParty: function (req, res) {
+        let id = req.query.id;
+        let favour;
+        let people = [];
+
+        Favour.findById(id)
+            .then(async (currentFavour) => {
+                favour = currentFavour;
+                people.push(currentFavour.owed_by);
+                people.push(currentFavour.owed_to);
+
+                while (favour) {
+                    if (favour.owed_to === currentFavour.owed_by) {
+                        return res.json({
+                            success: true,
+                            message: `A party just formed! Meetup with: `,
+                            people: people
+                        });
+                    }
+
+                    await Favour.findOne({ owed_by: favour.owed_to })
+                        .then(returnedFavour => {
+                            people.push(returnedFavour.owed_by);
+                            favour = returnedFavour;
+                        })
+                }
+            })
     }
 };
-
