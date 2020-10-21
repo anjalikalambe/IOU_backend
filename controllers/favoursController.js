@@ -281,11 +281,9 @@ module.exports = {
                         });
                     }
 
-                    await Favour.findOne({ owed_by: favour.owed_to })
-                        .then(returnedFavour => {
-                            people.push(returnedFavour.owed_by);
-                            favour = returnedFavour;
-                        })
+                    let returnedFavour = await Favour.findOne({ owed_by: favour.owed_to });
+                    people.push(returnedFavour.owed_by);
+                    favour = returnedFavour;
                 }
             })
     }
