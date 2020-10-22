@@ -301,6 +301,8 @@ module.exports = {
           });
         })
         .catch((err) => console.log(err));
+      
+      increaseNumRewards(owed_to);
     }
   },
   detectParty: function (req, res) {
