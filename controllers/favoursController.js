@@ -293,7 +293,13 @@ module.exports = {
 
       newFavour
         .save()
-        .then(() => console.log(`Created a favour for reward: ${item}`))
+        .then(() => {
+          console.log(`Created a favour for reward: ${item}`);
+          res.json({
+            success: true,
+            message: `All rewards resolved successfully`,
+          });
+        })
         .catch((err) => console.log(err));
     }
   },

@@ -205,7 +205,9 @@ module.exports = {
                 success: false,
                 message: `Could not delete the public request`,
                 err: err
-            })});
+            })
+            });
+        
     }
 };
 
