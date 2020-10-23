@@ -125,7 +125,7 @@ module.exports = {
                     if (!user) {
                         return res.status(404).json({
                             success: false,
-                            message: "Your username and/or password do not match"
+                            message: "User does not exist"
                         });
                     } else {
                         bcrypt.compare(password, user.password)
