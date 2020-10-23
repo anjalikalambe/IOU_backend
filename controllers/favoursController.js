@@ -1,6 +1,7 @@
 const Favour = require("../models/favour.model");
 const { findByUsername, increaseNumRewards } = require("./usersController");
 const jwt = require("jsonwebtoken");
+const backendURL = process.env.BACKEND_URL;
 
 //use token payload to get logged in user.
 const getLoggedInUser = (req, res) => {
@@ -29,6 +30,7 @@ module.exports = {
         });
       });
   },
+
   //returns all the rewards that the user is entitled to
   findRewardsEarned: function (req, res) {
     let username = getLoggedInUser(req, res);
@@ -114,7 +116,7 @@ module.exports = {
           req.protocol +
           "://" +
           req.hostname +
-          ":5000/" +
+          "/" +
           req.file.path.replace("\\", "/"))
       : " ";
 
@@ -156,7 +158,7 @@ module.exports = {
           req.protocol +
           "://" +
           req.hostname +
-          ":5000/" +
+          "/" +
           req.file.path.replace("\\", "/"))
       : " ";
 
@@ -229,7 +231,7 @@ module.exports = {
     Favour.findById(id)
       .then((favour) => {
         let openImgURL = favour.openImgURL;
-        let openImgName = openImgURL.replace("http://localhost/uploads/", "");
+        let openImgName = openImgURL.replace(backendURL + "/uploads/", "");
         res.json(openImgName);
       })
       .catch((err) => {
@@ -246,7 +248,7 @@ module.exports = {
     Favour.findById(id)
       .then((favour) => {
         let closeImgURL = favour.closeImgURL;
-        let closeImgName = closeImgURL.replace("http://localhost/uploads/", "");
+        let closeImgName = closeImgURL.replace(backendURL + "/uploads/", "");
         res.json(closeImgName);
       })
       .catch((err) => {
@@ -279,7 +281,10 @@ module.exports = {
       let openImgURL = "";
       req.file
         ? (openImgURL =
-            "http://localhost:5000/" + req.file.path.replace("\\", "/"))
+            req.protocol +
+            "://" +
+            req.hostname +
+            "/" + req.file.path.replace("\\", "/"))
         : " ";
 
       const newFavour = new Favour({
