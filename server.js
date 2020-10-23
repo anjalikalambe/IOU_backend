@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const passport = require('passport');
+const cors = require ('cors');
 
 const usersRouter = require('./routes/users');
 const favoursRouter = require('./routes/favours');
@@ -12,8 +13,14 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
 
+const corsOptions = {
+  origin: process.env.WHITELIST,
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
+app.use(cors(corsOptions));
 
 const indexHandler = (req, res) => {
     res.send(`<!DOCTYPE html><title>Hello, World!</title><h1>Favours</h1><p>Hello, World!</p>`);
