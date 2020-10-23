@@ -35,17 +35,34 @@ module.exports = {
         const password = req.body.password;
         const confirmPassword = req.body.confirmPassword;
         const numRewards = 0;
+        const illegalChars = /\W/;
+        const illegalPassword = /[^\x21-\x7E]/;
 
         if (!username || !password || !req.body.confirmPassword) {
             return res.status(400).json({
                 success: false,
                 message: "All fields are required"
             });
-        } else if (password.length < 6) {
+        } else if (username.length > 15) {
             return res.status(400).json({
                 success: false,
-                message: "Password must be atleast 6 characters"
+                message: "Username cant be more than 15 characters"
             });
+        } else if (illegalChars.test(state.username)) {
+            return res.status(400).json({
+                success: false,
+                message: "Username can only contain letters,numbers and underscore"
+            });            
+        } else if (password.length < 6 || password.length > 18) {
+            return res.status(400).json({
+                success: false,
+                message: "Password must be between 6 to 18 characters"
+            });
+        } else if (illegalPassword.test(state.password)) {
+            return res.status(400).json({
+                success: false,
+                message: "Password contains illegal characters"
+            });           
         } else if (password !== confirmPassword) {
             return res.status(400).json({
                 success: false,
