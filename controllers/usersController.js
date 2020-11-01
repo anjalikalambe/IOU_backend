@@ -35,60 +35,6 @@ module.exports = {
       });
     return obj;
   },
-  //deletes user from database
-  delete: function (req, res) {
-    const username = req.query.username;
-
-    User.findOneAndDelete({ username: username })
-      .then(() => {
-        res.json({
-          success: true,
-          message: `User deleted!`,
-          err: err,
-        });
-      })
-      .catch((err) => {
-        res.status(400).json({
-          success: false,
-          message: "User could not be deleted",
-          err: err,
-        });
-      });
-  },
-  //updates user details in database
-  update: function (req, res) {
-    const username = req.query.username;
-
-    User.findOne({ username: username })
-      .then((user) => {
-        user.username = req.body.username;
-        user.password = req.body.password;
-
-        user
-          .save()
-          .then(() =>
-            res.json({
-              success: false,
-              message: `User successfullly updated!`,
-              err: err,
-            })
-          )
-          .catch((err) =>
-            res.status(400).json({
-              success: false,
-              message: "User could not be updated",
-              err: err,
-            })
-          );
-      })
-      .catch((err) => {
-        res.status(400).json({
-          success: false,
-          message: "User could not be found",
-          err: err,
-        });
-      });
-  },
   // sorts users in descending order according to number of rewards earned
   sortUsers: function (req, res) {
     User.find({ numRewards: { $gt: 0 } })

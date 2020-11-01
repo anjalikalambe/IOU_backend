@@ -1,7 +1,6 @@
 const Favour = require("../models/favour.model");
 const { findByUsername, increaseNumRewards } = require("./usersController");
 const jwt = require("jsonwebtoken");
-const backendURL = process.env.BACKEND_URL;
 
 //use token payload to get logged in user.
 const getLoggedInUser = (req, res) => {
@@ -47,38 +46,6 @@ module.exports = {
         });
       });
   },
-  // returns all the favours that the user has owed in the past(for favours completed)
-  completedFavoursOwed: function (req, res) {
-    let username = getLoggedInUser(req, res);
-
-    Favour.find({ owed_by: username, completed: true })
-      .then((favours) => {
-        res.json(favours);
-      })
-      .catch((err) => {
-        res.status(400).json({
-          success: false,
-          message: `Could not find previous favours owed by user: ${username}`,
-          err: err,
-        });
-      });
-  },
-  //returns all the rewards that the user has earned in the past(for favours completed)
-  completedRewardsEarned: function (req, res) {
-    let username = getLoggedInUser(req, res);
-
-    Favour.find({ owed_to: username, completed: true })
-      .then((favours) => {
-        res.json(favours);
-      })
-      .catch((err) => {
-        res.status(400).json({
-          success: false,
-          message: `Could not find previous rewards earned by user: ${username}`,
-          err: err,
-        });
-      });
-  },
   //adds new rewards/favours to the database.
   add: async function (req, res) {
     let username = getLoggedInUser(req, res);
@@ -116,7 +83,7 @@ module.exports = {
           req.protocol +
           "://" +
           req.hostname +
-          "/" +
+          ":5000/" +
           req.file.path.replace("\\", "/"))
       : " ";
 
@@ -158,7 +125,7 @@ module.exports = {
           req.protocol +
           "://" +
           req.hostname +
-          "/" +
+          ":5000/" +
           req.file.path.replace("\\", "/"))
       : " ";
 
@@ -206,59 +173,6 @@ module.exports = {
         });
       });
   },
-  // deletes the favour from the database
-  delete: function (req, res) {
-    let id = req.query.id;
-
-    Favour.findByIdAndDelete(id)
-      .then(() => {
-        res.json({
-          success: true,
-          message: `Successfully deleted favour!`,
-        });
-      })
-      .catch((err) => {
-        res.status(400).json({
-          success: false,
-          message: `Could not delete favour`,
-          err: err,
-        });
-      });
-  },
-  getOpenImgName: function (req, res) {
-    let id = req.query.id;
-
-    Favour.findById(id)
-      .then((favour) => {
-        let openImgURL = favour.openImgURL;
-        let openImgName = openImgURL.replace(backendURL + "/uploads/", "");
-        res.json(openImgName);
-      })
-      .catch((err) => {
-        res.status(404).json({
-          success: false,
-          message: `Could not get image`,
-          err: err,
-        });
-      });
-  },
-  getClosedImgName: function (req, res) {
-    let id = req.query.id;
-
-    Favour.findById(id)
-      .then((favour) => {
-        let closeImgURL = favour.closeImgURL;
-        let closeImgName = closeImgURL.replace(backendURL + "/uploads/", "");
-        res.json(closeImgName);
-      })
-      .catch((err) => {
-        res.status(404).json({
-          success: false,
-          message: `Could not get image`,
-          err: err,
-        });
-      });
-  },
   addResolvedRequestFavour: function (req, res) {
     let loggedInUser = getLoggedInUser(req, res);
     const rewards = JSON.parse(req.body.rewards);
@@ -284,7 +198,7 @@ module.exports = {
             req.protocol +
             "://" +
             req.hostname +
-            "/" + req.file.path.replace("\\", "/"))
+            ":5000/" + req.file.path.replace("\\", "/"))
         : " ";
 
       const newFavour = new Favour({

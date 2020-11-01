@@ -2,20 +2,13 @@ const router = require('express').Router();
 const usersController = require('../controllers/usersController');
 const passport = require('passport');
 
+//routes associated with users - routes are protected thus require JWT token to be authenticated before accessing.
 router
-    .route('/')
+    .route('/') //returns all users 
     .get(passport.authenticate('jwt', {session: false}), usersController.findAll);
 
 router
-    .route('/delete/')
-    .delete(passport.authenticate('jwt', {session: false}), usersController.delete);
-
-router
-    .route('/update/')
-    .post(passport.authenticate('jwt', {session: false}), usersController.update);
-
-router
-    .route('/leaderboard/')
+    .route('/leaderboard/') //returns all users that are on the leaderboard - have earned atleast 1 reward.
     .get(usersController.sortUsers);
 
 module.exports = router;

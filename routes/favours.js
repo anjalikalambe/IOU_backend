@@ -9,10 +9,12 @@ const storage = multer.diskStorage({
         cb(null, './uploads/');
     },
     filename: function (req, file, cb) {
+        // date added to filename to give a unique name - otherwise files will overwrite each other.
         cb(null, `${new Date().toISOString().replace(/:/g, '-')}${file.originalname.split(" ").join("_")}`);
     }
 });
 const fileFilter = (req, file, cb) => {
+    // accept only images
     if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpg') {
         cb(null, true);
     } else {
@@ -24,49 +26,29 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 * 5 }, fileFilter: fileFilter }); 
 
 
-//routes
+//routes associated with favours - routes are protected, thus authentic jwt token required to access
 router
-    .route('/owed')
+    .route('/owed') //shows all favours owed by an user
     .get(passport.authenticate('jwt', {session: false}), favoursController.findFavoursOwed);
 
 router
-    .route('/earned')
+    .route('/earned') //shows all favours earned by an user
     .get(passport.authenticate('jwt', {session: false}), favoursController.findRewardsEarned);
 
 router
-    .route('/completedFavours')
-    .get(passport.authenticate('jwt', {session: false}), favoursController.completedFavoursOwed);
-
-router
-    .route('/receivedRewards')
-    .get(passport.authenticate('jwt', {session: false}), favoursController.completedRewardsEarned);
-
-router
-    .route('/add')
+    .route('/add') // adds a new favour or reward
     .post(passport.authenticate('jwt', { session: false }), upload.single('favourImage'), favoursController.add);
 
 router
-    .route('/resolve')
+    .route('/resolve') // resolves existing favour or reward
     .post(passport.authenticate('jwt', {session: false}), upload.single('favourImage'), favoursController.done);
 
-router
-    .route('/delete/')
-    .delete(passport.authenticate('jwt', { session: false }), favoursController.delete);
-
-router
-    .route('/getOpenImgName/')
-    .get(passport.authenticate('jwt', { session: false }), favoursController.getOpenImgName);
-
-router
-    .route('/getClosedImgName/')
-    .get(passport.authenticate('jwt', { session: false }), favoursController.getClosedImgName);
-
 router 
-    .route('/createRequestRewards')
+    .route('/createRequestRewards') // adds favours to user when user completes a public request 
     .post(passport.authenticate('jwt', { session: false }), upload.single('favourImage'), favoursController.addResolvedRequestFavour)
 
 router 
-    .route('/detectParty')
+    .route('/detectParty') // detects any loops where people owe each other favours
     .get(favoursController.detectParty)
 
 module.exports = router;
