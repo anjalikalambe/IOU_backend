@@ -3,12 +3,11 @@
 ## Description
 This repository is responsible for the server-side code of the IOU application developed by group 33 in Advanced Internet Programing 2020 Spring. 
 
-## Tools
-The technologies used in this code base include: 
+## Technology Involved
 - Node
 - Express
 - MongoDB Atlas
-- JWT and Passport Authentication 
+- JWT and Passportjs Authentication 
 
 ## Setup
 This application requires NodeJS and NPM to be installed.

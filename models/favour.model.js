@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-const rewardSchema = require('./requestReward.schema');
 
 const Schema = mongoose.Schema;
 
+//creates a new schema for favours which represent each document added to the collection
 const favoursSchema = new Schema({
     item: { type: String, required: true, trim: true, minlength: 3 },
     created_by: {type: String, required: true, trim: true},
@@ -15,6 +15,6 @@ const favoursSchema = new Schema({
     timestamps: true
 });
 
-const Favour = mongoose.model('Favour', favoursSchema);
+const Favour = mongoose.model('Favour', favoursSchema); // create favour model using the schema created
 
 module.exports = Favour;

@@ -30,8 +30,4 @@ router
     .route('/deleteReward/') //deletes a reward from the array of rewards on a public request
     .post(passport.authenticate('jwt', {session: false}), publicRequestsController.deleteReward);
 
-router
-    .route('/totalRewards/:id') //returns the number of rewards on a public request.
-    .get(publicRequestsController.numOfRewards);
-
 module.exports = router;
