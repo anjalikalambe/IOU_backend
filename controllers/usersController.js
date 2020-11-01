@@ -17,7 +17,7 @@ module.exports = {
         });
       });
   },
-  //finds user by username which is unique for all users
+  //finds user by username which is unique for all users - this function is called in favours controller when new favour is created, checks to see if username exists.
   findByUsername: async function (username) {
     let obj = null;
     await User.findOne({ username: username })
@@ -35,64 +35,11 @@ module.exports = {
       });
     return obj;
   },
-  //deletes user from database
-  delete: function (req, res) {
-    const username = req.query.username;
-
-    User.findOneAndDelete({ username: username })
-      .then(() => {
-        res.json({
-          success: true,
-          message: `User deleted!`,
-          err: err,
-        });
-      })
-      .catch((err) => {
-        res.status(400).json({
-          success: false,
-          message: "User could not be deleted",
-          err: err,
-        });
-      });
-  },
-  //updates user details in database
-  update: function (req, res) {
-    const username = req.query.username;
-
-    User.findOne({ username: username })
-      .then((user) => {
-        user.username = req.body.username;
-        user.password = req.body.password;
-
-        user
-          .save()
-          .then(() =>
-            res.json({
-              success: false,
-              message: `User successfullly updated!`,
-              err: err,
-            })
-          )
-          .catch((err) =>
-            res.status(400).json({
-              success: false,
-              message: "User could not be updated",
-              err: err,
-            })
-          );
-      })
-      .catch((err) => {
-        res.status(400).json({
-          success: false,
-          message: "User could not be found",
-          err: err,
-        });
-      });
-  },
   // sorts users in descending order according to number of rewards earned
   sortUsers: function (req, res) {
+    //filter users to find users who have rewards earned greater than 0.
     User.find({ numRewards: { $gt: 0 } })
-      .sort({ numRewards: -1 })
+      .sort({ numRewards: -1 }) // sorts in descending order
       .then((users) => {
         res.json(users);
       })
@@ -108,7 +55,7 @@ module.exports = {
   increaseNumRewards: function (owed_to) {
     User.findOne({ username: owed_to })
       .then((user) => {
-        user.numRewards = user.numRewards + 1;
+        user.numRewards = user.numRewards + 1; // increments everytime a favour or reward is created or if rewards of a public request are resolved.
         user.save();
       })
       .catch((err) => {

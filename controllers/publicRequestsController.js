@@ -13,6 +13,7 @@ const getLoggedInUser = (req, res) => {
 }
 
 module.exports = {
+    //returns all public requests in collection
     findAll: function (req, res) {
         PublicRequest.find()
             .then(requests => {res.json(requests)})
@@ -22,34 +23,7 @@ module.exports = {
                 err: err
             })});
     },
-    findById: function (req, res) {
-        let id = req.params.id;
-        PublicRequest.findById(id)
-            .then(request => { res.json(request)})
-            .catch(err => {res.status(400).json({
-                success: false,
-                message: `Could not find public request`,
-                err: err
-            })});
-    },
-    findByStatusOpen: function (req, res) {
-        PublicRequest.find({ status_open: {$eq: true} })
-            .then(requests => {res.json(requests)})
-            .catch(err=>{res.status(400).json({
-                success: false,
-                message: `Could not find any open public requests`,
-                err: err
-            })});
-    },
-    findByStatusClose: function (req, res) {
-        PublicRequest.find({ status_open: {$eq: false} })
-            .then(requests => {res.json(requests)})
-            .catch(err=>{res.status(400).json({
-                success: false,
-                message: `Could not find any closed public requests`,
-                err: err
-            })});
-    },
+    //filters the public requests using the keword sent, function uses mongodb's regex filter to search 
     findByKeywords: function (req, res) {
         const search = req.query.search;
 
@@ -61,19 +35,7 @@ module.exports = {
                 err: err
             })});
     },
-    getRewards: function (req, res) {
-        const id = req.params.id;
-
-        PublicRequest.findById(id)
-            .then(request => {
-                res.json(`Rewards: ${request.rewards}`);
-            })
-            .catch(err=>{res.status(400).json({
-                success: false,
-                message: `Could not get all rewards of the public request`,
-                err: err
-            })});
-    },
+    //filters the public requests using the reward sent, function uses regex not sensitive to character case
     findByReward: function (req, res) {
         const search = req.query.search;
 
@@ -85,6 +47,7 @@ module.exports = {
                 err: err
             })});
     },
+    // adds a reward to the array of rewards on a publci request
     addReward: function (req, res) {
         const id = req.query.id;
         let username = getLoggedInUser(req, res)
@@ -92,7 +55,7 @@ module.exports = {
             item: req.body.item,
             owed_by: username
         }
-        
+        // mongodb's push allows instant update to nested array in document.
         PublicRequest.findByIdAndUpdate({ _id: id }, { $push: { rewards: newReward } })
             .then((request) => {
                 request.save();
@@ -107,13 +70,14 @@ module.exports = {
             }));
         
     },
+    // deletes a reward from the array of rewards on a public request
     deleteReward: async function (req, res) {
         const id = req.query.id;
         const item = req.body.item;
         const owed_by = getLoggedInUser(req, res);
         let numRewards;
 
-
+        // mongodb's pull allows instant update to nested array in document after by removing the specified element.
         await PublicRequest.findOneAndUpdate({ _id: id }, { $pull: { 'rewards' : {'item' : item , 'owed_by' : owed_by}}})
             .then(() => res.json({
                 success: true,
@@ -127,29 +91,17 @@ module.exports = {
         
         await PublicRequest.findById(id)
             .then(request => {
-                numRewards = request.rewards.length;
+                numRewards = request.rewards.length; // find how many rewards are left on the public request
             })
         
+        //if num of rewards is zero then according to spec, public request needs to be deleted
         if (numRewards === 0) {
             PublicRequest.findByIdAndDelete(id)
                 .then(console.log("deleted"))
         }
 
     },
-    numOfRewards: function (req, res) {
-        const id = req.params.id;
-
-        PublicRequest.findById(id)
-            .then(request => {
-                let length = request.rewards.length;
-                res.json(length);
-            })
-            .catch(err=>res.status(400).json({
-                success: false,
-                message: `Could not get number of rewards on the public request`,
-                err: err
-            }));
-    },
+    // create and save a new public request to the collection of public requests
     add: function (req, res) {
         let username = getLoggedInUser(req, res);
         
@@ -179,22 +131,7 @@ module.exports = {
                 err: err
             }));
     },
-    closeRequest: function (req, res) {
-        let id = req.params.id;
-
-        PublicRequest.updateOne({ _id: id }, { $set: { "status_open": false, "completed_by": req.body.completed_by } })
-            .then(() => { res.json({
-                success: true,
-                message: `Successfully closed public request!`
-            })})
-            .catch(err => { res.status(400).json({
-                success: false,
-                message: `Could not close the public request`,
-                err: err
-            }) });
-        
-        
-    },
+    // deletes public request using id passed once it has been completed. 
     delete: async function (req, res) {        
         PublicRequest.findByIdAndDelete(req.body.id)
             .then(() => { res.json({
